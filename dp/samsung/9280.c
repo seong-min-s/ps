@@ -66,25 +66,7 @@ int main(void)
 		for (int i = 0; i < 2 * m; i++)
 		{
 			scanf_s("%d", &carNum);
-			enque(carNum);
-		}
-		
-		while ((carNum = deque())!=0)
-		{
-			if (carNum < 0)
-			{
-				carNum = -carNum;
-				for (int j = 0; j < n; j++)
-				{
-					if (isParked[j] == carNum)
-					{
-						cost += parkingLot[j] * carWeight[carNum - 1];
-						isParked[j] = 0;
-						break;
-					}
-				}
-			}
-			else if (carNum > 0)
+			if (carNum > 0)
 			{
 				for (int j = 0; j < n; j++)
 				{
@@ -93,11 +75,35 @@ int main(void)
 						isParked[j] = carNum;
 						break;
 					}
+					if (j == n-1)
+					{
+						enque(carNum);
+					}
+				}
+			}
+			else if (carNum < 0)
+			{
+				carNum = -carNum;
+				for (int j = 0; j < n; j++)
+				{
+					if (isParked[j] == carNum)
+					{
+						cost += parkingLot[j] * carWeight[carNum - 1];
+						isParked[j] = 0;
+						if ((carNum = deque()) != 0)
+						{
+							isParked[j] = carNum;
+						}
+						break;
+					}
 				}
 			}
 		}
 
 		printf("#%d %d\n", test_case, cost);
 	}
+	free(carWeight);
+	free(parkingLot);
+	free(queue);
 	return 0; //정상종료시 반드시 0을 리턴해야 합니다.
 }
