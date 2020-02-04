@@ -2,12 +2,13 @@
 #include<vector>
 #include<queue>
 #include<algorithm>
+#define MAX_SIZE 1000+1
+
 using namespace std;
 
-vector<bool> isVisited;
-vector<int> vs;
-vector<vector<int>> graph;
-queue<int> q;
+bool isVisited[MAX_SIZE];
+vector<uint16_t> graph[MAX_SIZE];
+queue<uint16_t> q;
 
 void dfs(int vertex)
 {
@@ -18,13 +19,14 @@ void dfs(int vertex)
 	cout << vertex << " ";
 	isVisited[vertex] = true;
 
-	for (int i = 0; i < graph[vertex].size(); i++)
+	for (uint16_t i = 0; i < graph[vertex].size(); i++)
 	{
 		dfs(graph[vertex][i]);
 	}
 }
 void bfs(int vertex)
 {
+	memset(isVisited, false, sizeof(isVisited));
 	isVisited[vertex] = true;
 	q.push(vertex);
 
@@ -33,7 +35,7 @@ void bfs(int vertex)
 		int value = q.front();
 		q.pop();
 		cout << value << " ";
-		for (int i = 0; i < graph[value].size(); i++)
+		for (uint16_t i = 0; i < graph[value].size(); i++)
 		{
 			if (!isVisited[graph[value][i]])
 			{
@@ -46,28 +48,32 @@ void bfs(int vertex)
 
 int main()
 {
+	ios_base::sync_with_stdio(false);
+	cin.tie(nullptr);
+	cout.tie(nullptr);
+
 	int vertex;
 	int edge;
 	int startVertex;
 	int from, to;
-
 	cin >> vertex >> edge >> startVertex;
-	graph.assign((vertex + 1), vs);
-	isVisited.assign((vertex + 1), 0);
 
-	for (int i = 0; i < edge; i++)
+	for (uint16_t i = 0; i < edge; i++)
 	{
 		cin >> from >> to;
-		graph[from].push_back(to);
-		graph[to].push_back(from);
+		graph[from].emplace_back(to);
+		graph[to].emplace_back(from);
 	}
-	for (int i = 0; i < graph.size(); i++)
+	for (uint16_t i = 0; i < MAX_SIZE; i++)
 	{
 		sort(graph[i].begin(), graph[i].end());
 	}
 	dfs(startVertex);
-	isVisited.erase(isVisited.begin(), isVisited.end());
-	isVisited.assign((vertex + 1), 0);
+
+	for (auto i : isVisited)
+	{
+		i = 0;
+	}
 	cout << endl;
 	bfs(startVertex);
 
