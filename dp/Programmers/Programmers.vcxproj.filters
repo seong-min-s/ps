@@ -18,6 +18,9 @@
     <ClCompile Include="hsk_hash2.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="hsk_hash3.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="test.txt">

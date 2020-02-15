@@ -124,6 +124,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="hsk_hash2.cpp" />
+    <ClCompile Include="hsk_hash3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="test.txt" />
