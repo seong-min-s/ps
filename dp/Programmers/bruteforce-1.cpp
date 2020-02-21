@@ -42,7 +42,7 @@ vector<int> solution(vector<int> answers)
 
 	for (int i = 0; i < 3; i++)
 	{
-		if (count[i] == maxElement);
+		if (count[i] == maxElement)
 		{
 			answer.push_back(i + 1);
 		}
