@@ -20,7 +20,7 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="hsk-dfs-4.cpp">
+    <ClCompile Include="bruteforce-1.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
