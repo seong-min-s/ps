@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="boardCover0.cpp">
+    <ClCompile Include="clocksync.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
