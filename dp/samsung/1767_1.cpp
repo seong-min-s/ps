@@ -3,10 +3,11 @@
 #include<algorithm>
 using namespace std;
 
+vector<vector<int>> result;
 typedef struct connectInfo {
-	bool bIsConnected;
+	int powerCount;
 	int len;
-}ConnectInfos;
+}ConnectInfo;
 int dir[4][2]
 {
 	{-1,0},
@@ -15,55 +16,104 @@ int dir[4][2]
 	{0,-1},
 };
 
-ConnectInfos set(int dIdx, int yPos, int xPos, vector<vector<int>>& cells)
+ConnectInfo set(int dIdx, int yPos, int xPos, vector<vector<int>>& cells)
 {
-	ConnectInfos aInfo;
+	ConnectInfo result;
+	bool bFlagConnected = false;
+	int len = 0;
+	int y = yPos;
+	int x = xPos;
 
-	aInfo.bIsConnected = false;
-	aInfo.len = 0;
+	cells[y][x] = 3;//방문표시
 
-	int y = yPos + dir[dIdx][0];
-	int x = xPos + dir[dIdx][1];
-
-	while (y >= 0 && y < cells.size() && x >= 0 && x < cells.size() && !cells[y][x])
+	//전원부에 인접한 경우
+	if (dIdx == 0 && yPos == 0)
 	{
+		result.powerCount = 1;
+		result.len = 0;
+		return result;
+	}
+	else if (dIdx == 1 && xPos == cells.size() - 1)
+	{
+		result.powerCount = 1;
+		result.len = 0;
+		return result;
+	}
+	else if (dIdx == 2 && yPos == cells.size() - 1)
+	{
+		result.powerCount = 1;
+		result.len = 0;
+		return result;
+	}
+	else if (dIdx == 3 && xPos == 0)
+	{
+		result.powerCount = 1;
+		result.len = 0;
+		return result;
+	}
+	else if (dIdx == 4)
+	{
+		result.powerCount = 0;
+		result.len = 0;
+		return result;
+	}
 
-		if (y == 0 || y == cells.size() - 1 || x == 0 || x == cells.size() - 1)
+	//특정 방향의 전원부까지 연결을 할 수 있는가?
+	y = yPos + dir[dIdx][0];
+	x = xPos + dir[dIdx][1];
+
+	while (y >= 0 && y < cells.size() && x >= 0 && x < cells.size())
+	{
+		if (cells[y][x] == 1 || cells[y][x] == 2 || cells[y][x] == 3 || cells[y][x] == -1) //장애물을 만났을 경우
 		{
-			aInfo.bIsConnected = true;
+			break;
+		}
+		if (y == 0 || y == cells.size() - 1 || x == 0 || x == cells.size() - 1) //전원부 인접에 도달했을 경우
+		{
+			bFlagConnected = true;
 		}
 		y += dir[dIdx][0];
 		x += dir[dIdx][1];
 	}
-	if (!aInfo.bIsConnected)
+
+	if (!bFlagConnected)
 	{
-		return aInfo;
+		result.powerCount = 0;
+		result.len = 0;
+		return result;
 	}
 	else
 	{
-		aInfo.bIsConnected = true;
-		
 		y = yPos + dir[dIdx][0];
 		x = xPos + dir[dIdx][1];
 
 		while (y >= 0 && y < cells.size() && x >= 0 && x < cells.size() && !cells[y][x])
 		{
-			cells[y][x] = 2;
-			aInfo.len++;
+			cells[y][x] = 2;//길이표시
 			y += dir[dIdx][0];
 			x += dir[dIdx][1];
+			len++;
 		}
-
-		return aInfo;
+		result.powerCount = 1;
+		result.len = len;
+		return result;
 	}
 }
 
-int getMaxConnectedLenRecursive(vector<vector<int>>& cells)
+void unset(int dIdx, int yPos, int xPos, vector<vector<int>> cells, vector<vector<int>> restore)
 {
+	cells = restore;
+}
+
+ConnectInfo getMaxConnectedLenRecursive(vector<vector<int>>& cells, int power, int len)
+{
+	ConnectInfo info = { 0,0 };
+	vector<vector<int>> restoreV = cells;
 	bool state = true;
 	int xPos;
 	int yPos;
-	//종료조건
+
+	//방문여부
 	for (int i = 0; i < cells.size(); i++)
 	{
 		for (int j = 0; j < cells.size(); j++)
@@ -82,21 +132,37 @@ int getMaxConnectedLenRecursive(vector<vector<int>>& cells)
 		}
 	}
 
+	//모든 노드를 방문했다면 종료
 	if (state)
 	{
-		return 0;
+		ConnectInfo result;
+		result.powerCount = power;
+		result.len = len;
+
+		return result;
 	}
-	for (int dIdx = 0; dIdx < 4; dIdx++)
+
+	int powerMax = -1;
+	int lenMin = 1000;
+
+	for (int dIdx = 0; dIdx < 5; dIdx++)
 	{
 		//연결
-		ConnectInfos aInfo = set(dIdx, yPos, xPos, cells);
-		//재귀
-		getMaxConnectedLenRecursive(cells);
-		//비교
+		ConnectInfo afterSetInfo = set(dIdx, yPos, xPos, cells);
 
+		//나머지 셀에서 연결정보를 탐색하고, 비교한다.
+		info = getMaxConnectedLenRecursive(cells, power + afterSetInfo.powerCount, len + afterSetInfo.len);
+		if (info.powerCount > powerMax && info.len < lenMin)
+		{
+			powerMax = info.powerCount;
+			lenMin = info.len;
+		}
 		//해제
+		unset(dIdx, yPos, xPos, cells, restoreV);
 	}
-	return getMinLen(yPos, xPos, cells) + getMaxConnectedLenRecursive(cells);
+	info.powerCount = powerMax;
+	info.len = lenMin;
+	return info;
 }
 int main(int argc, char** argv)
 {
@@ -117,16 +183,10 @@ int main(int argc, char** argv)
 				cin >> MexinosCells[i][j];
 			}
 		}
-		sum = getMaxConnectedLenRecursive(MexinosCells);
-		for (int i = 0; i < size; i++)
-		{
-			for (int j = 0; j < size; j++)
-			{
-				cout << MexinosCells[i][j] << " ";
-			}
-			cout << endl;
-		}
-		cout << "#" << test_case << " " << sum << endl;
+		ConnectInfo ret = getMaxConnectedLenRecursive(MexinosCells, 0, 0);
+
+		cout << "#" << test_case << " "<<ret.powerCount << " " << ret.len << endl;
+
 	}
 	return 0;
 }
