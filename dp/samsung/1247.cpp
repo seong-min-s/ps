@@ -13,10 +13,10 @@ typedef struct pos {
 
 int dfs(vector<int>& isVisited, vector<Pos>& customers, Pos& curPos, Pos& home, int len)
 {
-	int flag = -1;
-	for (int i = 0; i < isVisited.size(); i++)
+	int flag = 0;
+	for (int i = 1; i <= isVisited.size(); i++)
 	{
-		if (isVisited[i] == 0)
+		if (isVisited[i-1] == 0)
 		{
 			flag = i;
 			break;
@@ -53,8 +53,8 @@ int main() {
 	int customerSize;
 	int result = 0;
 	int min_value = 3000;
-
-	freopen("test.txt", "r", stdin);
+/*
+	freopen("test.txt", "r", stdin);*/
 
 	Pos customerPos;
 	Pos homePos;
