@@ -4,35 +4,43 @@ namespace FibonacciNumber
 {
     class Program
     {
+        /// <summary>
+        /// 피보나치 수열
+        /// n의 값으로 2 이상의 값을 넣는다고 가정해야 함.
+        /// 
+        /// 깊이에 대한 감각..
+        /// </summary>
+        /// <param name="args"></param>
         static void Main(string[] args)
         {
-            int[] nums = new int[100];
-            nums[0] = 0;
-            nums[1] = 1;
-
-            Console.WriteLine("Fibonacci Numbers is generating...");
-            for (int i = 2; i < 100; i++)
+            while(true)
             {
-                nums[i] = nums[i - 1] + nums[i - 2];
-                Console.Write("#");
+                int number;
+                if (int.TryParse(Console.ReadLine(), out number) && number >= 2)
+                {
+                    
+                    Console.WriteLine($"GetFibonacciNumberRecursive({number}) : {GetFibonacciNumberRecursive(number)}");
+                }
+                else
+                {
+                    continue;
+                }
             }
-            Console.WriteLine("Done");
-            Console.WriteLine($"GetFibonacciNumberRecursive(nums,2) : {GetFibonacciNumberRecursive(nums,2)}");
-            
+
             #region
-            int GetFibonacciNumberRecursive(int[] nums, int idx)
+            int GetFibonacciNumberRecursive(int n)
             {
-                if (idx == 0)
+                if (n == 0)
                 {
                     return 0;
                 }
-                else if (idx == 1)
+                else if (n == 1)
                 {
                     return 1;
                 }
                 else
                 {
-                    return GetFibonacciNumberRecursive(nums, idx - 1) + GetFibonacciNumberRecursive(nums, idx - 2);
+                    return GetFibonacciNumberRecursive(n - 1) + GetFibonacciNumberRecursive(n - 2);
                 }
             }
             #endregion
